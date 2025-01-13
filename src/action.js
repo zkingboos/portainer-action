@@ -71,12 +71,12 @@ const main = async () => {
     await pullImagesAction(http, token, nodeId, pullImages, registryId);
   }
 
-  if (startStack) {
-    await handleStackAction(http, token, nodeId, startStack, "start");
-  }
-
   if (stopStack) {
     await handleStackAction(http, token, nodeId, stopStack, "stop");
+  }
+
+  if (startStack) {
+    await handleStackAction(http, token, nodeId, startStack, "start");
   }
 
   core.info("Action completed successfully");
