@@ -37,6 +37,22 @@ const pullImagesAction = async (
   core.info("Images pulled successfully");
 };
 
+const handleStackAction = async (http, token, nodeId, stackId, action) => {
+  const endpoint = `/api/stacks/${stackId}/${action}`;
+
+  await http.post(endpoint, null, {
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-Key": token,
+    },
+    params: {
+      endpointId: nodeId,
+    },
+  });
+
+  core.info(`Stack ${action} successfully`);
+};
+
 const main = async () => {
   const url = core.getInput("url");
   const token = core.getInput("token");
@@ -44,12 +60,23 @@ const main = async () => {
   const pullImages = core.getInput("pull_images").split(",").filter(Boolean);
   const registryId = core.getInput("registry_id");
 
+  const startStack = core.getInput("start_stack");
+  const stopStack = core.getInput("stop_stack");
+
   const http = axios.create({
     baseURL: url,
   });
 
   if (pullImages.length) {
     await pullImagesAction(http, token, nodeId, pullImages, registryId);
+  }
+
+  if (startStack) {
+    await handleStackAction(http, token, nodeId, startStack, "start");
+  }
+
+  if (stopStack) {
+    await handleStackAction(http, token, nodeId, stopStack, "stop");
   }
 
   core.info("Action completed successfully");

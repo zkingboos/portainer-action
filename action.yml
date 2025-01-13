@@ -16,6 +16,12 @@ inputs:
   registry_id:
     description: "Registry ID"
     required: false
+  start_stack:
+    description: "Start stack"
+    required: false
+  down_stack:
+    description: "Down stack"
+    required: false
 
 runs:
   using: "node20"
