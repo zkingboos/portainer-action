@@ -22,6 +22,9 @@ inputs:
   stop_stack:
     description: "Stop stack"
     required: false
+  redeploy_stack:
+    description: "Redeploy stack"
+    required: false
 
 runs:
   using: "node20"

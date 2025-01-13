@@ -37,7 +37,7 @@ const pullImagesAction = async (
   core.info("Images pulled successfully");
 };
 
-const handleStackAction = async (http, token, nodeId, stackId, action) => {
+const singleStackAction = async (http, token, nodeId, stackId, action) => {
   const endpoint = `/api/stacks/${stackId}/${action}`;
 
   await http
@@ -57,30 +57,51 @@ const handleStackAction = async (http, token, nodeId, stackId, action) => {
   core.info(`Stack ${action} successfully`);
 };
 
+const handleStackAction = async (http, token, nodeId, stacksId, action) => {
+  for (const stackId of stacksId) {
+    await singleStackAction(http, token, nodeId, stackId, action);
+  }
+};
+
+const redeployStackAction = async (http, token, nodeId, stacksId) => {
+  for (const stackId of stacksId) {
+    await singleStackAction(http, token, nodeId, stackId, "stop");
+    await singleStackAction(http, token, nodeId, stackId, "start");
+  }
+};
+
 const main = async () => {
   const url = core.getInput("url");
   const token = core.getInput("token");
   const nodeId = core.getInput("node_id");
-  const pullImages = core.getInput("pull_images").split(",").filter(Boolean);
+  const pullImages = core.getInput("pull_images")?.split(",")?.filter(Boolean);
   const registryId = core.getInput("registry_id");
 
-  const startStack = core.getInput("start_stack");
-  const stopStack = core.getInput("stop_stack");
+  const startStack = core.getInput("start_stack")?.split(",")?.filter(Boolean);
+  const stopStack = core.getInput("stop_stack")?.split(",")?.filter(Boolean);
+  const redeployStack = core
+    .getInput("redeploy_stack")
+    ?.split(",")
+    ?.filter(Boolean);
 
   const http = axios.create({
     baseURL: url,
   });
 
-  if (pullImages.length) {
+  if (pullImages?.length) {
     await pullImagesAction(http, token, nodeId, pullImages, registryId);
   }
 
-  if (stopStack) {
+  if (stopStack?.length) {
     await handleStackAction(http, token, nodeId, stopStack, "stop");
   }
 
-  if (startStack) {
+  if (startStack?.length) {
     await handleStackAction(http, token, nodeId, startStack, "start");
+  }
+
+  if (redeployStack?.length) {
+    await redeployStackAction(http, token, nodeId, redeployStack);
   }
 
   core.info("Action completed successfully");
