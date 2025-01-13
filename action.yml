@@ -19,8 +19,8 @@ inputs:
   start_stack:
     description: "Start stack"
     required: false
-  down_stack:
-    description: "Down stack"
+  stop_stack:
+    description: "Stop stack"
     required: false
 
 runs:
