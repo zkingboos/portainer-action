@@ -1,0 +1,22 @@
+name: "Portainer Action"
+description: "Interact with Portainer API"
+inputs:
+  url:
+    description: "Portainer URL"
+    required: true
+  token:
+    description: "Portainer API Token"
+    required: true
+  node_id:
+    description: "Node ID"
+    required: true
+  pull_images:
+    description: "Pull images"
+    required: false
+  registry_id:
+    description: "Registry ID"
+    required: false
+
+runs:
+  using: "node20"
+  main: "dist/index.js"
