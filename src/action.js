@@ -40,15 +40,19 @@ const pullImagesAction = async (
 const handleStackAction = async (http, token, nodeId, stackId, action) => {
   const endpoint = `/api/stacks/${stackId}/${action}`;
 
-  await http.post(endpoint, null, {
-    headers: {
-      "Content-Type": "application/json",
-      "X-API-Key": token,
-    },
-    params: {
-      endpointId: nodeId,
-    },
-  });
+  await http
+    .post(endpoint, null, {
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": token,
+      },
+      params: {
+        endpointId: nodeId,
+      },
+    })
+    .catch((error) => {
+      core.info(`Error: ${error.response.data.message}`);
+    });
 
   core.info(`Stack ${action} successfully`);
 };
